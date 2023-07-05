@@ -8,7 +8,10 @@ load_dotenv()
 
 def makeDumpCommand(dbName,host,sourcePort,destFolder,isGzip=True):
     destPath='{cwd}/{destFolder}'.format(cwd=os.getcwd(),destFolder=destFolder)
-    uri='--uri=mongodb://{host}:{port}/{DB}'.format(host=host,port=sourcePort,DB=dbName)
+    if(not os.getenv('DUMP_URI')):
+        uri='--uri=mongodb://{host}:{port}/{DB}'.format(host=host,port=sourcePort,DB=dbName)
+    else:
+        uri='--uri={URI}'.format(URI=os.getenv('DUMP_URI'))
     outputDir='--out={dp}'.format(dp=destPath)
     print('outputDIR' + outputDir)
     
@@ -32,5 +35,12 @@ try:
         print(dumpCMD_copy)
 
         subprocess.call(dumpCMD_copy)
+    print("****** SUCCESSFULLY DUMPED********")
+    print("\n"*10)
+    print("******STARTING RESTORATION********")
+    subprocess.call(['python3','restoreDump.py'])
 except Exception as e:
+    print("=========================================")
     print(e)
+    print("=========================================")
+
