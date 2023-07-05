@@ -6,12 +6,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def makeDumpCommand(dbName,host,sourcePort,destFolder):
+def makeDumpCommand(dbName,host,sourcePort,destFolder,isGzip=True):
     destPath='{cwd}/{destFolder}'.format(cwd=os.getcwd(),destFolder=destFolder)
     uri='--uri=mongodb://{host}:{port}/{DB}'.format(host=host,port=sourcePort,DB=dbName)
-    print('dvbdjb')
     outputDir='--out={dp}'.format(dp=destPath)
     print('outputDIR' + outputDir)
+    
+    if(isGzip):
+        return ['mongodump','--gzip',uri,outputDir]
     return ['mongodump',uri,outputDir]
 try:
     mongoclient=pymongo.MongoClient("localhost", 27017)
